@@ -1,7 +1,13 @@
 import { useContext } from 'react';
 
-import { PluginStoreContext } from '~/core';
+import { PluginStore, PluginStoreContext } from '~/core';
 
-export function usePluginStore() {
-  return useContext(PluginStoreContext);
-}
+export const usePluginStore = (): PluginStore => {
+  const context = useContext<PluginStore>(PluginStoreContext);
+
+  if (!context) {
+    throw new Error('usePluginStore must be used within SignalRProvider');
+  }
+
+  return context;
+};

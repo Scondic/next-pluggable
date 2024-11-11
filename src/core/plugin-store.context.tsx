@@ -1,5 +1,5 @@
-import React from 'react';
+import { createContext } from 'react';
 
 import { PluginStore } from './plugin-store';
 
-export const PluginStoreContext = React.createContext(new PluginStore());
+export const PluginStoreContext = createContext(new PluginStore());

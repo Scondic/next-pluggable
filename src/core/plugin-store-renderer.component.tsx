@@ -7,7 +7,7 @@ import { PluginStoreRendererProps } from './plugin-store.types';
 
 export const PluginStoreRenderer: React.FC<PluginStoreRendererProps> = ({ placement }) => {
   const pluginStore = usePluginStore();
-  const forceUpdate = usePluginForceUpdate();
+  const { forceUpdate } = usePluginForceUpdate();
 
   useEffect(() => {
     const eventListener = (event: ComponentEvent) => {
