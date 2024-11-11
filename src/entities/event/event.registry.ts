@@ -1,23 +1,25 @@
+import { EventAction } from '~/enums';
+
 import { EventEntry } from './event.entry';
 
 export class EventRegistry {
-  registry: Map<string, Array<(event: EventEntry) => {}>>;
+  registry: Map<EventAction | string, Array<(event: EventEntry | string) => {}>>;
 
   constructor() {
     this.registry = new Map();
   }
 
-  addEventListener(name: string, callback: any) {
-    let callbacks = this.registry.get(name);
+  addEventListener(eventAction: EventAction | string, callback: any) {
+    let callbacks = this.registry.get(eventAction);
     if (callbacks) {
       callbacks.push(callback);
     } else {
-      this.registry.set(name, [callback]);
+      this.registry.set(eventAction, [callback]);
     }
   }
 
-  removeEventListener(name: string, callback: any) {
-    let callbacks = this.registry.get(name);
+  removeEventListener(eventAction: EventAction | string, callback: any) {
+    let callbacks = this.registry.get(eventAction);
     if (callbacks) {
       const indexOf = callbacks.indexOf(callback);
       if (indexOf > -1) {
@@ -27,7 +29,7 @@ export class EventRegistry {
   }
 
   dispatchEvent(event: EventEntry) {
-    let callbacks = this.registry.get(event.name);
+    let callbacks = this.registry.get(event.eventAction);
     for (let i in callbacks) {
       callbacks[i as any](event);
       if (!event.propagate) break;

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import { usePluginForceUpdate, usePluginStore } from '~/hooks';
 import { ComponentEvent } from '~/entities';
+import { EventAction } from '~/enums';
 
 import { PluginStoreRendererProps } from './plugin-store.types';
 
@@ -15,14 +16,14 @@ export const PluginStoreRenderer: React.FC<PluginStoreRendererProps> = ({ placem
         forceUpdate();
       }
     };
-    pluginStore.addEventListener('Renderer.componentUpdated', eventListener);
+    pluginStore.addEventListener(EventAction.COMPONENT_UPDATE, eventListener);
 
     return () => {
-      pluginStore.removeEventListener('Renderer.componentUpdated', eventListener);
+      pluginStore.removeEventListener(EventAction.COMPONENT_UPDATE, eventListener);
     };
   }, [pluginStore, placement, forceUpdate]);
 
-  let components = pluginStore.executeFunction('Renderer.getComponentsInPosition', placement);
+  let components = pluginStore.executeFunction(EventAction.COMPONENT_MOUNT, placement);
 
   return (
     <>

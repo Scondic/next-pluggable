@@ -1,8 +1,10 @@
-export class EventEntry {
-  name: string;
+import { EventAction } from '~/enums';
 
-  constructor(name: string) {
-    this.name = name;
+export class EventEntry {
+  eventAction: EventAction | string;
+
+  constructor(eventAction: EventAction | string) {
+    this.eventAction = eventAction;
     this._propagate = true;
     this._defaults = true;
   }

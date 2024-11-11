@@ -4,6 +4,7 @@ import { generateString } from '~/utils';
 import { PluginStoreRenderer } from './plugin-store-renderer.component';
 import { PluginStoreProps } from './plugin-store.types';
 import { PluginStore } from './plugin-store';
+import { EventAction } from '~/enums';
 
 export class RendererPlugin implements PluginStoreProps {
   public pluginStore: PluginStore = new PluginStore();
@@ -36,7 +37,7 @@ export class RendererPlugin implements PluginStoreProps {
       array.push({ component, key: componentKey });
     }
     this.componentMap.set(position, array);
-    this.pluginStore.dispatchEvent(new ComponentEvent('Renderer.componentUpdated', position));
+    this.pluginStore.dispatchEvent(new ComponentEvent(EventAction.COMPONENT_UPDATE, position));
   }
 
   removeFromComponentMap(position: string, component: React.ComponentClass) {
@@ -47,7 +48,7 @@ export class RendererPlugin implements PluginStoreProps {
         1,
       );
     }
-    this.pluginStore.dispatchEvent(new ComponentEvent('Renderer.componentUpdated', position));
+    this.pluginStore.dispatchEvent(new ComponentEvent(EventAction.COMPONENT_UPDATE, position));
   }
 
   getRendererComponent() {
@@ -62,35 +63,35 @@ export class RendererPlugin implements PluginStoreProps {
   }
 
   activate() {
-    this.pluginStore.addFunction('Renderer.add', this.addToComponentMap.bind(this));
+    this.pluginStore.addFunction(EventAction.COMPONENT_CREATE, this.addToComponentMap.bind(this));
 
     this.pluginStore.addFunction(
-      'Renderer.getComponentsInPosition',
+      EventAction.COMPONENT_MOUNT,
       this.getComponentsInPosition.bind(this),
     );
 
     this.pluginStore.addFunction(
-      'Renderer.getRendererComponent',
+      EventAction.GET_RENDERER_COMPONENT,
       this.getRendererComponent.bind(this),
     );
 
-    this.pluginStore.addFunction('Renderer.remove', this.removeFromComponentMap.bind(this));
+    this.pluginStore.addFunction(
+      EventAction.COMPONENT_REMOVE,
+      this.removeFromComponentMap.bind(this),
+    );
   }
 
   deactivate() {
-    this.pluginStore.removeFunction('Renderer.add');
-
-    this.pluginStore.removeFunction('Renderer.getComponentsInPosition');
-
-    this.pluginStore.removeFunction('Renderer.getRendererComponent');
-
-    this.pluginStore.removeFunction('Renderer.remove');
+    this.pluginStore.removeFunction(EventAction.COMPONENT_CREATE);
+    this.pluginStore.removeFunction(EventAction.COMPONENT_MOUNT);
+    this.pluginStore.removeFunction(EventAction.GET_RENDERER_COMPONENT);
+    this.pluginStore.removeFunction(EventAction.COMPONENT_REMOVE);
   }
 }
 
 export type PluginStoreRenderer = {
   executeFunction(
-    functionName: 'Renderer.getComponentsInPosition',
+    functionName: EventAction.COMPONENT_MOUNT,
     position: string,
   ): Array<React.Component>;
 };

@@ -1,15 +1,16 @@
 import { EventEntry, EventRegistry } from '~/entities';
 import { dependencyValidation } from '~/utils';
+import { EventAction } from '~/enums';
 
 import { PluginStoreProps } from './plugin-store.types';
 
 export class PluginStore {
-  private functionArray: Map<string, any>;
+  private functionArray: Map<EventAction | string, any>;
   private pluginMap: Map<string, PluginStoreProps>;
   private _eventCallableRegistry: EventRegistry = new EventRegistry();
 
   constructor() {
-    this.functionArray = new Map<string, any>();
+    this.functionArray = new Map<EventAction | string, any>();
     this.pluginMap = new Map<string, PluginStoreProps>();
   }
 
@@ -56,11 +57,11 @@ export class PluginStore {
     return plugin.getPluginName();
   }
 
-  addFunction(key: string, fn: any) {
+  addFunction(key: EventAction | string, fn: any) {
     this.functionArray.set(key, fn);
   }
 
-  executeFunction(key: string, ...args: any): any {
+  executeFunction(key: EventAction | string, ...args: any): any {
     let fn = this.functionArray.get(key);
     if (fn) {
       return fn(...args);
@@ -68,7 +69,7 @@ export class PluginStore {
     console.error('No function added for the key ' + key + '.');
   }
 
-  removeFunction(key: string): void {
+  removeFunction(key: EventAction | string): void {
     this.functionArray.delete(key);
   }
 
@@ -81,12 +82,18 @@ export class PluginStore {
     }
   }
 
-  addEventListener<EventType = EventEntry>(name: string, callback: (event: EventType) => void) {
-    this._eventCallableRegistry.addEventListener(name, callback);
+  addEventListener<EventType = EventEntry>(
+    eventAction: EventAction | string,
+    callback: (event: EventType) => void,
+  ) {
+    this._eventCallableRegistry.addEventListener(eventAction, callback);
   }
 
-  removeEventListener<EventType = EventEntry>(name: string, callback: (event: EventType) => void) {
-    this._eventCallableRegistry.removeEventListener(name, callback);
+  removeEventListener<EventType = EventEntry>(
+    eventAction: EventAction | string,
+    callback: (event: EventType) => void,
+  ) {
+    this._eventCallableRegistry.removeEventListener(eventAction, callback);
   }
 
   dispatchEvent<EventType = EventEntry>(event: EventType) {
