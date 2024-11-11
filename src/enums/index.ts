@@ -1,1 +1,1 @@
-export { EventAction } from './render-actions';
+export { EventAction } from './event-actions';
