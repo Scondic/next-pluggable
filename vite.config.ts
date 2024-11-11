@@ -2,9 +2,21 @@ import { resolve } from 'path';
 
 import { defineConfig, LibraryFormats } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [
+    tsconfigPaths(),
+    dts({
+      insertTypesEntry: true,
+    }),
+  ],
+
+  resolve: {
+    alias: {
+      '~': resolve(__dirname, './src'),
+    },
+  },
 
   build: {
     outDir: 'build',
